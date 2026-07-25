@@ -49,7 +49,24 @@ export default function SettingsPage() {
     canvas.height = Math.round(img.height * scale);
     canvas.getContext("2d")!.drawImage(img, 0, 0, canvas.width, canvas.height);
     const resized = canvas.toDataURL("image/png");
-    setSettings((s) => (s ? { ...s, signatureImage: resized } : s));
+    // save immediately so the image can't be lost by forgetting to hit Save
+    setSettings((s) => {
+      if (!s) return s;
+      const next = { ...s, signatureImage: resized };
+      putSettings(next);
+      return next;
+    });
+    setSaved(true);
+    setTimeout(() => setSaved(false), 1800);
+  };
+
+  const removeSignature = async () => {
+    if (!settings) return;
+    const next = { ...settings, signatureImage: "" };
+    setSettings(next);
+    await putSettings(next);
+    setSaved(true);
+    setTimeout(() => setSaved(false), 1800);
   };
 
   useEffect(() => {
@@ -195,9 +212,12 @@ export default function SettingsPage() {
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={settings.signatureImage}
-                    alt="Signature / stamp"
-                    className="max-h-20 w-auto"
+                    alt="Signature / stamp preview"
+                    className="max-h-28 w-auto"
                   />
+                  <div className="mt-1 text-center text-[10px] font-semibold uppercase tracking-wider text-neutral-400">
+                    Preview — as printed
+                  </div>
                 </div>
               ) : (
                 <span className="text-sm text-ink-soft">
@@ -211,13 +231,7 @@ export default function SettingsPage() {
                   {settings.signatureImage ? "Replace" : "Upload"}
                 </NeuButton>
                 {settings.signatureImage && (
-                  <NeuButton
-                    size="sm"
-                    variant="danger"
-                    onClick={() =>
-                      setSettings({ ...settings, signatureImage: "" })
-                    }
-                  >
+                  <NeuButton size="sm" variant="danger" onClick={removeSignature}>
                     <Trash2 size={14} /> Remove
                   </NeuButton>
                 )}

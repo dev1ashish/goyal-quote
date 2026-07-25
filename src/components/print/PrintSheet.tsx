@@ -155,10 +155,10 @@ export function PrintSheet({
         <table className="mt-[6mm] w-full border-collapse text-[9.5pt]">
           <thead>
             <tr style={{ background: TEAL, color: "#ffffff" }}>
-              <th className="w-[9mm] py-[2.5mm] pl-[2.5mm] text-left font-semibold">
+              <th className="w-[13mm] py-[2.5mm] pl-[2.5mm] pr-[3mm] text-left font-semibold">
                 S.N.
               </th>
-              <th className="py-[2.5mm] text-left font-semibold">
+              <th className="py-[2.5mm] pl-[2mm] text-left font-semibold">
                 Item &amp; Description
               </th>
               {customCols.map((col) => (
@@ -191,8 +191,10 @@ export function PrintSheet({
                   background: i % 2 === 1 ? "#f7f5f2" : "transparent",
                 }}
               >
-                <td className="py-[2.2mm] pl-[2.5mm] align-top">{i + 1}</td>
-                <td className="py-[2.2mm] pr-[3mm] align-top font-medium">
+                <td className="py-[2.2mm] pl-[2.5mm] pr-[3mm] align-top">
+                  {i + 1}
+                </td>
+                <td className="py-[2.2mm] pl-[2mm] pr-[3mm] align-top font-medium">
                   {it.description}
                 </td>
                 {customCols.map((col) => (

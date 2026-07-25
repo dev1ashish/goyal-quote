@@ -112,13 +112,13 @@ export function LineItemsTable({
       <div className="neu-inset overflow-x-auto rounded-2xl px-2 py-1">
         <table
           className="w-full border-separate border-spacing-x-1 border-spacing-y-1.5"
-          style={{ minWidth: `${700 + customColumns.length * 130}px` }}
+          style={{ minWidth: `${760 + customColumns.length * 130}px` }}
         >
           <thead>
             <tr>
               <th className="w-8" />
               <th className={`${headTh} w-8 text-left`}>#</th>
-              <th className={`${headTh} pl-2 text-left`}>
+              <th className={`${headTh} min-w-60 pl-2 pr-4 text-left`}>
                 Item &amp; Description
               </th>
               {customColumns.map((col, i) => (
