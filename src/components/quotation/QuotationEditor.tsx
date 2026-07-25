@@ -29,6 +29,7 @@ import { NeuButton } from "@/components/neu/NeuButton";
 import { NeuCard } from "@/components/neu/NeuCard";
 import { NeuInput, NeuSelect, NeuTextarea, Field } from "@/components/neu/NeuInput";
 import { CustomerPicker } from "./CustomerPicker";
+import { EditorSkeleton } from "./EditorSkeleton";
 import { LineItemsTable, newLineItem } from "./LineItemsTable";
 import { TotalsPanel } from "./TotalsPanel";
 
@@ -56,7 +57,7 @@ export function QuotationEditor({ id }: { id?: number }) {
         setQuotation(existing);
       } else {
         const settings = await getSettings();
-        const refNo = await nextRefNo();
+        const refNo = await nextRefNo(settings);
         if (cancelled) return;
         setQuotation({
           refNo,
@@ -177,7 +178,7 @@ export function QuotationEditor({ id }: { id?: number }) {
     );
   }
 
-  if (!quotation) return null;
+  if (!quotation) return <EditorSkeleton />;
 
   return (
     <div className="mx-auto max-w-5xl">

@@ -1,4 +1,5 @@
 import { getSettings, putSettings } from "./store";
+import type { Settings } from "./types";
 
 /** Financial year string like "2026-27" for a given date. */
 export function financialYear(d: Date = new Date()): string {
@@ -7,9 +8,9 @@ export function financialYear(d: Date = new Date()): string {
   return `${startYear}-${String((startYear + 1) % 100).padStart(2, "0")}`;
 }
 
-/** Reserve the next ref number, e.g. CS/2026-27/0007. */
-export async function nextRefNo(): Promise<string> {
-  const settings = await getSettings();
+/** Reserve the next ref number, e.g. CS/2026-27/0007. Pass settings if already loaded to skip a refetch. */
+export async function nextRefNo(preloaded?: Settings): Promise<string> {
+  const settings = preloaded ?? (await getSettings());
   const fy = financialYear();
   const next = (settings.refCounters[fy] ?? 0) + 1;
   await putSettings({
