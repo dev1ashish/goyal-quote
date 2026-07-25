@@ -1,0 +1,155 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --surface: #e8e6e1;
+  --surface-hi: #f4f2ee;
+  --surface-lo: #dcd9d2;
+  --neu-light: rgba(255, 255, 255, 0.85);
+  --neu-dark: rgba(163, 157, 146, 0.55);
+  --teal: #1d3a35;
+  --teal-soft: #2e5850;
+  --gold: #b28d3e;
+  --gold-soft: #c9a961;
+  --ink: #26312e;
+  --ink-soft: #5d6663;
+  --on-accent: #f4f2ee;
+  color-scheme: light;
+}
+
+.dark {
+  --surface: #26282c;
+  --surface-hi: #2f3237;
+  --surface-lo: #1c1e21;
+  --neu-light: rgba(255, 255, 255, 0.07);
+  --neu-dark: rgba(0, 0, 0, 0.6);
+  --teal: #a5cec4;
+  --teal-soft: #c0e0d7;
+  --gold: #cfa95e;
+  --gold-soft: #dcbe80;
+  --ink: #e4e7e5;
+  --ink-soft: #aab1ae;
+  --on-accent: #1c1e21;
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-surface: var(--surface);
+  --color-surface-hi: var(--surface-hi);
+  --color-surface-lo: var(--surface-lo);
+  --color-teal: var(--teal);
+  --color-teal-soft: var(--teal-soft);
+  --color-gold: var(--gold);
+  --color-gold-soft: var(--gold-soft);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-on-accent: var(--on-accent);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@utility neu-raised {
+  background: var(--surface);
+  box-shadow:
+    7px 7px 16px var(--neu-dark),
+    -7px -7px 16px var(--neu-light);
+}
+
+@utility neu-raised-sm {
+  background: var(--surface);
+  box-shadow:
+    4px 4px 9px var(--neu-dark),
+    -4px -4px 9px var(--neu-light);
+}
+
+@utility neu-raised-xs {
+  background: var(--surface);
+  box-shadow:
+    2px 2px 5px var(--neu-dark),
+    -2px -2px 5px var(--neu-light);
+}
+
+@utility neu-inset {
+  background: var(--surface);
+  box-shadow:
+    inset 3px 3px 7px var(--neu-dark),
+    inset -3px -3px 7px var(--neu-light);
+}
+
+@utility neu-inset-sm {
+  background: var(--surface);
+  box-shadow:
+    inset 2px 2px 4px var(--neu-dark),
+    inset -2px -2px 4px var(--neu-light);
+}
+
+@utility neu-pressed {
+  background: var(--surface);
+  box-shadow:
+    inset 4px 4px 9px var(--neu-dark),
+    inset -4px -4px 9px var(--neu-light);
+}
+
+@utility neu-cell {
+  background: var(--surface);
+  box-shadow:
+    inset 1.5px 1.5px 3.5px var(--neu-dark),
+    inset -1.5px -1.5px 3.5px var(--neu-light);
+}
+
+@utility neu-flat {
+  background: var(--surface);
+  box-shadow:
+    3px 3px 8px var(--neu-dark),
+    -3px -3px 8px var(--neu-light),
+    inset 1px 1px 0 rgba(255, 255, 255, 0.4);
+}
+
+body {
+  background: var(--surface);
+  color: var(--ink);
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+}
+
+input,
+select,
+textarea {
+  outline: none;
+}
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+::selection {
+  background: var(--gold-soft);
+  color: var(--teal);
+}
+
+/* ---------- Print (letterhead A4) ---------- */
+@page {
+  size: A4;
+  margin: 0;
+}
+
+@media print {
+  body {
+    background: #ffffff;
+  }
+  .no-print {
+    display: none !important;
+  }
+  .print-sheet {
+    box-shadow: none !important;
+    margin: 0 !important;
+    width: 210mm !important;
+    min-height: 297mm !important;
+  }
+}
