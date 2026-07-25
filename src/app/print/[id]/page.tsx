@@ -1,10 +1,11 @@
 "use client";
 
-import { use } from "react";
+import { use, useRef, useState } from "react";
 import Link from "next/link";
 import { motion } from "motion/react";
-import { ArrowLeft, Printer } from "lucide-react";
+import { ArrowLeft, Printer, Share2, Download } from "lucide-react";
 import { useStore, getQuotation, getSettings } from "@/lib/store";
+import { downloadPdf, sharePdf } from "@/lib/pdf";
 import { PrintSheet } from "@/components/print/PrintSheet";
 import { NeuButton } from "@/components/neu/NeuButton";
 
@@ -19,6 +20,8 @@ export default function PrintPage({
     [id]
   );
   const settings = useStore(() => getSettings(), []);
+  const sheetRef = useRef<HTMLDivElement>(null);
+  const [busy, setBusy] = useState<"share" | "download" | null>(null);
 
   if (result === undefined) return null; // still loading
   const quotation = result.quotation;
@@ -33,6 +36,32 @@ export default function PrintPage({
     );
   }
 
+  const fileName = `Quotation-${quotation.refNo.replace(/[\/\s]+/g, "-")}`;
+
+  const doShare = async () => {
+    if (!sheetRef.current || busy) return;
+    setBusy("share");
+    try {
+      await sharePdf(
+        sheetRef.current,
+        fileName,
+        `Quotation ${quotation.refNo} from Computer Solution`
+      );
+    } finally {
+      setBusy(null);
+    }
+  };
+
+  const doDownload = async () => {
+    if (!sheetRef.current || busy) return;
+    setBusy("download");
+    try {
+      await downloadPdf(sheetRef.current, fileName);
+    } finally {
+      setBusy(null);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-surface-lo/60 pb-16">
       <motion.div
@@ -42,15 +71,27 @@ export default function PrintPage({
       >
         <Link href={`/quotations/${id}`}>
           <NeuButton size="sm" tabIndex={-1}>
-            <ArrowLeft size={14} /> Back to Editor
+            <ArrowLeft size={14} /> Back
           </NeuButton>
         </Link>
         <span className="text-sm font-semibold text-ink-soft">
           {quotation.refNo}
         </span>
-        <div className="ml-auto">
-          <NeuButton variant="gold" onClick={() => window.print()}>
-            <Printer size={15} /> Print / Save as PDF
+        <div className="ml-auto flex flex-wrap items-center gap-2.5">
+          <NeuButton onClick={() => window.print()} size="sm">
+            <Printer size={14} /> Print
+          </NeuButton>
+          <NeuButton onClick={doDownload} size="sm" disabled={busy !== null}>
+            <Download size={14} />
+            {busy === "download" ? "Making PDF…" : "Download PDF"}
+          </NeuButton>
+          <NeuButton
+            variant="gold"
+            onClick={doShare}
+            disabled={busy !== null}
+          >
+            <Share2 size={15} />
+            {busy === "share" ? "Making PDF…" : "Share PDF"}
           </NeuButton>
         </div>
       </motion.div>
@@ -61,7 +102,9 @@ export default function PrintPage({
         transition={{ delay: 0.08 }}
         className="overflow-x-auto px-2"
       >
-        <PrintSheet quotation={quotation} settings={settings} />
+        <div ref={sheetRef} className="mx-auto w-[210mm]">
+          <PrintSheet quotation={quotation} settings={settings} />
+        </div>
       </motion.div>
     </div>
   );
