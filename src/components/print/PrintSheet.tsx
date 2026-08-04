@@ -16,7 +16,8 @@ export function PrintSheet({
   quotation: Quotation;
   settings?: Settings;
 }) {
-  const t = computeTotals(quotation.items, quotation.discount);
+  const gstMode = quotation.gstMode ?? "add";
+  const t = computeTotals(quotation.items, quotation.discount, gstMode);
   const items = quotation.items.filter(
     (it) => it.description.trim() || lineAmount(it) > 0
   );
@@ -229,7 +230,9 @@ export function PrintSheet({
                   <TotalRow label="Taxable Value" value={t.taxable} />
                 </>
               )}
-              <TotalRow label={`GST (${GST_RATE}%)`} value={t.gst} />
+              {gstMode === "add" && (
+                <TotalRow label={`GST (${GST_RATE}%)`} value={t.gst} />
+              )}
               {t.roundOff !== 0 && <TotalRow label="Round Off" value={t.roundOff} />}
               <tr>
                 <td
@@ -248,6 +251,12 @@ export function PrintSheet({
             </tbody>
           </table>
         </div>
+
+        {gstMode === "included" && (
+          <p className="mt-[2mm] text-right text-[8.5pt] italic">
+            Prices inclusive of GST ({GST_RATE}%): ₹ {fmtMoney(t.gst)}
+          </p>
+        )}
 
         {t.grandTotal > 0 && (
           <p className="mt-[3mm] text-right text-[9pt] font-semibold italic">

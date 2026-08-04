@@ -100,7 +100,7 @@ export default function QuotationsPage() {
       <ul className="flex flex-col gap-4">
         <AnimatePresence initial={false}>
           {quotations?.map((q) => {
-            const total = computeTotals(q.items, q.discount).grandTotal;
+            const total = computeTotals(q.items, q.discount, q.gstMode ?? "add").grandTotal;
             return (
               <motion.li
                 key={q.id}

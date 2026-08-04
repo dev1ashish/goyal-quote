@@ -1,26 +1,42 @@
 "use client";
 
 import type { Discount, LineItem } from "@/lib/types";
-import { computeTotals, fmtMoney, GST_RATE } from "@/lib/calc";
+import { computeTotals, fmtMoney, GST_RATE, type GstMode } from "@/lib/calc";
 import { amountInWords } from "@/lib/amount-in-words";
 import { AnimatedNumber } from "@/components/neu/AnimatedNumber";
 import { NeuInput } from "@/components/neu/NeuInput";
+import { ToggleRow } from "./ToggleRow";
 
 interface TotalsPanelProps {
   items: LineItem[];
   discount: Discount;
+  gstMode: GstMode;
   onDiscountChange: (d: Discount) => void;
+  onGstModeChange: (m: GstMode) => void;
 }
 
 export function TotalsPanel({
   items,
   discount,
+  gstMode,
   onDiscountChange,
+  onGstModeChange,
 }: TotalsPanelProps) {
-  const t = computeTotals(items, discount);
+  const t = computeTotals(items, discount, gstMode);
 
   return (
     <div className="flex flex-col gap-3">
+      <ToggleRow
+        label={`Add GST (${GST_RATE}%) on top`}
+        on={gstMode === "add"}
+        onChange={(v) => onGstModeChange(v ? "add" : "included")}
+      />
+      {gstMode === "included" && (
+        <p className="-mt-1 px-1 text-xs leading-relaxed text-ink-soft">
+          Entered prices are treated as GST-inclusive — nothing extra is added.
+        </p>
+      )}
+
       <Line label="Subtotal" value={fmtMoney(t.subtotal)} />
 
       <div className="flex items-center justify-between gap-3">
@@ -62,7 +78,9 @@ export function TotalsPanel({
         <Line label="Taxable Value" value={fmtMoney(t.taxable)} />
       )}
 
-      <Line label={`GST (${GST_RATE}%)`} value={fmtMoney(t.gst)} />
+      {gstMode === "add" && (
+        <Line label={`GST (${GST_RATE}%)`} value={fmtMoney(t.gst)} />
+      )}
 
       {t.roundOff !== 0 && (
         <Line
@@ -79,6 +97,17 @@ export function TotalsPanel({
           ₹<AnimatedNumber value={t.grandTotal} format={fmtMoney} />
         </span>
       </div>
+
+      {gstMode === "included" && (
+        <div className="flex items-center justify-between px-1">
+          <span className="text-xs italic text-ink-soft">
+            Includes GST ({GST_RATE}%)
+          </span>
+          <span className="text-xs font-semibold tabular-nums text-ink-soft">
+            ₹{fmtMoney(t.gst)}
+          </span>
+        </div>
+      )}
 
       <p className="px-1 text-xs italic leading-relaxed text-ink-soft">
         {t.grandTotal > 0 ? amountInWords(t.grandTotal) : " "}

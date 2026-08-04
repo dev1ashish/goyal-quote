@@ -42,6 +42,8 @@ export interface Quotation {
   showBankDetails?: boolean;
   /** print the signature/stamp image from Settings on this quote (default true) */
   showSignature?: boolean;
+  /** "add" puts GST on top of prices; "included" treats entered prices as GST-inclusive. undefined → "add" (legacy) */
+  gstMode?: "add" | "included";
   customer: CustomerInfo;
   items: LineItem[];
   /** user-defined extra columns shown in the items table and on the print */

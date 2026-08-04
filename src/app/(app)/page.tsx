@@ -33,7 +33,7 @@ export default function DashboardPage() {
     let sentCount = 0;
 
     for (const q of all) {
-      const total = computeTotals(q.items, q.discount).grandTotal;
+      const total = computeTotals(q.items, q.discount, q.gstMode ?? "add").grandTotal;
       if (q.createdAt >= monthStart) {
         monthCount++;
         monthValue += total;
@@ -138,7 +138,7 @@ export default function DashboardPage() {
 
       <ul className="flex flex-col gap-4">
         {recent?.map((q, i) => {
-          const total = computeTotals(q.items, q.discount).grandTotal;
+          const total = computeTotals(q.items, q.discount, q.gstMode ?? "add").grandTotal;
           return (
             <motion.li
               key={q.id}

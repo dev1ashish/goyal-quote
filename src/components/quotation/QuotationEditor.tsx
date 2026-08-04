@@ -32,6 +32,7 @@ import { CustomerPicker } from "./CustomerPicker";
 import { EditorSkeleton } from "./EditorSkeleton";
 import { LineItemsTable, newLineItem } from "./LineItemsTable";
 import { TotalsPanel } from "./TotalsPanel";
+import { ToggleRow } from "./ToggleRow";
 
 export function QuotationEditor({ id }: { id?: number }) {
   const router = useRouter();
@@ -68,6 +69,7 @@ export function QuotationEditor({ id }: { id?: number }) {
           customer: { name: "", phone: "", address: "", gstin: "" },
           items: [newLineItem()],
           discount: { type: "flat", value: 0 },
+          gstMode: "included",
           notes: "",
           terms: settings.defaultTerms,
           createdAt: Date.now(),
@@ -383,57 +385,12 @@ export function QuotationEditor({ id }: { id?: number }) {
           <TotalsPanel
             items={quotation.items}
             discount={quotation.discount}
+            gstMode={quotation.gstMode ?? "add"}
             onDiscountChange={(discount) => change({ discount })}
+            onGstModeChange={(gstMode) => change({ gstMode })}
           />
         </NeuCard>
       </div>
-    </div>
-  );
-}
-
-function ToggleRow({
-  label,
-  on,
-  onChange,
-  missing,
-  missingHint,
-}: {
-  label: string;
-  on: boolean;
-  onChange: (v: boolean) => void;
-  missing: boolean;
-  missingHint: string;
-}) {
-  return (
-    <div className="flex items-center justify-between gap-3">
-      <span className="text-sm text-ink">
-        {label}
-        {missing && (
-          <Link
-            href="/settings"
-            className="ml-2 text-xs font-semibold text-gold underline decoration-dotted underline-offset-2"
-          >
-            ({missingHint})
-          </Link>
-        )}
-      </span>
-      <button
-        type="button"
-        role="switch"
-        aria-checked={on}
-        onClick={() => onChange(!on)}
-        className={`relative h-6 w-11 shrink-0 rounded-full transition-colors ${
-          on ? "bg-gold" : "neu-inset-sm"
-        }`}
-      >
-        <motion.span
-          layout
-          transition={{ type: "spring", stiffness: 500, damping: 30 }}
-          className={`absolute top-0.5 h-5 w-5 rounded-full bg-surface-hi shadow-md ${
-            on ? "left-[22px]" : "left-0.5"
-          }`}
-        />
-      </button>
     </div>
   );
 }
